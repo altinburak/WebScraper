@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Net;
 
 namespace WebScraper
@@ -52,10 +53,19 @@ namespace WebScraper
 
 		private static string GetVariants(string html)
 		{
+			var count = html.Count(x => x.Equals("<div class=\"dropDown\">"));
 			var startIndex = html.IndexOf("<div class=\"dropDown\">");
 			startIndex = html.IndexOf(">", startIndex);
 			var endIndex = html.IndexOf("</div>", startIndex);
-			return html.Substring(startIndex + 1, endIndex - startIndex);
+			var result = html.Substring(startIndex + 1, endIndex - startIndex);
+			for (int i = 1; i < count; i++)
+			{
+				startIndex = html.IndexOf("<div class=\"dropDown\">");
+				startIndex = html.IndexOf(">", startIndex);
+				endIndex = html.IndexOf("</div>", startIndex);
+				result += html.Substring(startIndex + 1, endIndex - startIndex);
+			}
+			return result;
 		}
 		public static string HttpGet(string URI)
 		{
